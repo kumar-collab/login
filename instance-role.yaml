@@ -1,0 +1,34 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "2-  Creates an IAM role"
+Resources:
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName:
+        Ref: IamRole
+      Roles:
+        - Ref: IamRole
+  IamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action: sts:AssumeRole
+            Condition: {}
+      RoleName: Tons-App-EC2-RL
+      PermissionsBoundary:
+        Fn::Sub: arn:${AWS::Partition}:iam::000947572020:policy/FBIPermissionsBoundary
+      ManagedPolicyArns:
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/CloudWatchAgentServerPolicy
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/AmazonS3FullAccess
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/AmazonRDSFullAccess
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess
+        - Fn::Sub: arn:${AWS::Partition}:iam::000947572020:policy/tnns-kms-policy
+Outputs: {}
