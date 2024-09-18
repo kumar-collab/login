@@ -1,0 +1,59 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  MySubnetIDs:
+    Description: Public Subnet for App1
+    Type: String
+    Default: subnet-0a54058212811e50a
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+    Default: OWLS-WIN-KP
+  AppRole:
+    Description: Name of the Role
+    Type: String
+    Default: Tons-App-EC2-RL
+  ImageId:
+    Description: Image ID to launch EC2 instances.
+    Type: AWS::EC2::Image::Id
+    Default: ami-05b1d72770b42099c
+  EC2SecurityGroups:
+    Description: "Security Group for EC2"
+    Type: AWS::EC2::SecurityGroup::Id
+    Default: sg-04cc39a57b01b837e
+  InstanceType:
+    Description: Instance type to launch EC2 instances.
+    Type: String
+    Default: t3.large
+    AllowedValues:
+      - t3.micro
+      - t3.large
+      - t3.xlarge
+      - t3.2xlarge
+      - c5.xlarge
+      - c5.2xlarge
+Resources:
+  Instance1:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: !Ref KeyName
+      IamInstanceProfile: !Ref AppRole
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      SubnetId: !Ref MySubnetIDs
+      SecurityGroupIds:
+        - !Ref EC2SecurityGroups
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            Encrypted: True
+            VolumeType: gp2
+            VolumeSize: 300
+      Tags:
+        - Key: Env
+          Value: Dev
+        - Key: Project
+          Value: OWLS
+        - Key: Name
+          Value: OWLS-DEV-WIN-NSINGH4
